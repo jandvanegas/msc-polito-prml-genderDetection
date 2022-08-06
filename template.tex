@@ -1,0 +1,461 @@
+\documentclass[12pt, twocolumn]{article}
+\usepackage{cite}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+
+\usepackage{sectsty}        % used to customize the size of the section titles
+\usepackage[table,xcdraw]{xcolor}
+
+\usepackage[colorinlistoftodos,prependcaption]{todonotes}
+
+\usepackage{lipsum, float}
+
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
+\usepackage[a4paper,top=3cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=1
+.75cm]{geometry}
+\setlength {\marginparwidth }{2cm}
+\setlength{\belowcaptionskip}{-10pt}
+\sectionfont{\fontsize{12}{15}\selectfont}
+\title{Wine Quality Detection}
+
+\author{
+  BASARTE VICTOR\\
+  MSc Candidate\\
+  Computer Engineering\\
+  Politecnico di Torino\\
+  s304308
+  \\
+  \and
+  VANEGAS JUAN\\
+  MSc Candidate\\
+  Computer Engineering\\
+  Politecnico di Torino\\
+  s298351\\
+}
+
+\begin{document}
+  \maketitle
+
+  \begin{abstract}
+  \end{abstract}
+
+  \keywords{ Machine Learning, Pattern Detection, Data Analytics, wine quality}
+
+
+  \section{INTRODUCTION--}
+  The project aims to find a model for the binary detection of wine quality
+  using the knowledge acquired in the subject of \textbf{Pattern Recognition
+  and
+  Machine Learning}. The project is divided in different sections following the standard work process.
+
+  First of all, original data is analyzed. Then, some preprocessing techniques are studied and applied in order to make the different models perform better. Once data is processed, both generative and discrimitative approaches are applied to the data and the obtained results are recorded, compared and evaluated.
+
+  The first section explains the dataset, its features and labels.
+  After the first section, the focus is on the process of finding a model for
+  the wine quality detection. The first step is the preprocessing of
+  the data.
+
+  Several preprocessing methods were tested such as outlier detection, normalization, standardization. Also, feature selection method, PCA is implemented and applied.
+
+Following sections are related to classification performance and their analysis. First, Gaussian methods are studied , specifically MVG, Naive Bayes, Tied Gaussian and Tied Naive.
+Then, same evaluations are done with discriminate approaches, linear regression and 
+quadratic linear regression.
+
+Finally, some conclusions about all the obtained outcomes along the project are disclosed.
+
+
+
+
+
+
+
+  \section{ABOUT THE DATASET--}
+  Wine Quality dataset \cite{CORTEZ2009547} has been created to explain red
+  and white variants of the Portuguese "Vinho Verde" \cite{VinhoVerde} wine.
+  The dataset includes \textbf{red} and \textbf{white} wine samples, in which
+  the input include objective test values, and the output is based on
+  sensory data (median of at least 3 evaluations made by wine experts).
+
+  Each expert graded the wine quality between 0 (very bad) and 10 (very
+  excellent).
+  The original task required class classification between all possible wine
+  qualities, but this project will focus in a simplified approach of
+  the dataset in which classes have been binarized.Feature 12 is simply 0
+  (low quality, <= 5) or 1 (high quality, >= 7).
+  Also, wines with quality 6 have been removed and red and white wines have
+  been merged into a single dataset making no distinction between
+  them.
+
+  Each wine sample consists of 11 features which are based on
+  physicochemical tests:
+  \begin{itemize}
+    \item Fixed acidity
+    \item Volatile acidity
+    \item Citric acid
+    \item Residual sugar
+    \item Chlorides
+    \item Free sulfur dioxide
+    \item Total sulfur dioxide
+    \item Density
+    \item pH
+    \item Sulphates
+    \item Alcohol
+  \end{itemize}
+  The dataset is split into Train and Test data in separated files.
+  It must be noted that “classes are ordered and not balanced (e.g. there
+  are many more normal wines than excellent or poor ones).
+
+  \subsection{PREPROCESSING--}
+  Plotting the initial features, figure \ref{01RawData} shows that
+  the range of values differs from feature to feature, and that they are not
+  equally centered which could affect the performance of different methods
+  prioritizing more one feature than another.
+  Feature normalizing and standardizing could help to avoid this, so it is
+  the first preprocessing technique to apply. Figure
+  \ref{02NormalizedStandarizedData} shows the normalized and standardized data.
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=7cm]{01RawData}
+    \caption{Initial features histogram.}
+    \label{01RawData}
+  \end{figure}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=7cm]{02NormalizedStandarizedData}
+    \caption{Normalized and standardized features histogram.}
+    \label{02NormalizedStandarizedData}
+  \end{figure}
+  Features such as chlorides, free sulfur dioxide, or Volatile acidity
+  have outliers. However, according to\cite{Chloride} ranges of chloride can
+  reach
+  to 1g/L, and the more chloride, the less quality the wine has. Figure
+  \ref{fig:03chloridesoutliers} shows this tendency when chloride is greater
+  than
+  0.3 most of the samples have low quality.
+  Therefore, if this data is removed, the models would lose key data to the
+  detection of low quality wine samples.
+
+  In the same line figures\ref{fig:04freesulfurdioxideoutlier} and
+  \ref{fig:05totalsulfurdioxideoutlier} shows the same tendency that the
+  greater
+  the values are, the wine samples are categorized as low quality.
+  Therefore, for our project, a removal of outliers is not applied.
+
+  \begin{figure}[!ht]
+    \centering
+    \includegraphics[width=7cm]{03ChloridesOutliers}
+    \caption{Chloride data split in two parts to show outliers.}
+    \label{fig:03chloridesoutliers}
+  \end{figure}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=7cm]{04FreeSulfurDioxideOutlier}
+    \caption{Free sulfur dioxide data split in two parts to show outliers.}
+    \label{fig:04freesulfurdioxideoutlier}
+  \end{figure}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=7cm]{05TotalSulfurDioxideOutlier}
+    \caption{Total sulfur dioxide data split in two parts to show outliers.}
+    \label{fig:05totalsulfurdioxideoutlier}
+  \end{figure}
+  Instead of removing outliers, in order to not affect performance of gaussian
+  methods, Gaussianization is applied over the data.
+  Figure \ref{fig:06Gaussianization} has the result of this transformation
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=7cm]{06Gaussianization}
+    \caption{Data applied gaussianization.}
+    \label{fig:06Gaussianization}
+  \end{figure}
+
+
+  \section{FEATURE SELECTION--}
+  After preprocessing the wine dataset, the next step is to know if all the
+  features help the models to discriminate between high quality wines against
+  low quality wines.
+  For this purpose, the Pearson correlation coefficient is displayed in figure
+  \ref{fig:07PearsonMatrix}.
+  
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=7cm]{07PearsonMatrix}
+    \caption{Pearson coefficient matrix.}
+    \label{fig:07PearsonMatrix}
+  \end{figure}
+
+  There can be visualized that features 5 and 6 (Free sulfure dioxide, and
+  Total sulfure dioxide), are strongly correlated among others that are soft
+  correlated, which brings up the need to apply a feature discrimination
+  technique, such as PCA.
+
+
+  The number of components to use are 9.
+  This decision was based on the criteria of keeping 95 percent or the
+  accumulated variance ratio.
+  The figure \ref{fig:08PCA_analisys} shows how this ratio changes and that
+  95 is reached only when m is greater or equal than 9.
+
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=7cm]{08PCA_analisys}
+    \caption{PCA components vs accumulated variance ratio.}
+    \label{fig:08PCA_analisys}
+  \end{figure}
+
+
+  \section{CLASSIFICATION--}
+  \subsection{GAUSSIAN METHODS-- }
+  The first method for classifying between good and bad wine quality are
+  gaussian methods.
+  Specifically the gaussian methods to apply are:
+  \begin{itemize}
+    \item Multivariate Gaussian (MVG)
+    \item Naive
+    \item Tied Gaussian
+    \item Tied Naive
+  \end{itemize}
+  The methods are applied over different states of the data, meaning, the
+  feature data without preprocessing (raw features), standardized and
+  normalized, gaussianized, PCA(m=9). The error is calculated with Leave One
+  Out Cross Validation (LOOCV).
+
+  The results reported are the values of the min DCF and can be seen in the table\ref{tab:gaussian-comparison}.
+  Some key points to highlight are:
+  \begin{itemize}
+    \item The best method overall is MVG.
+    \item Gaussianization improves classification.
+    \item PCA does not help with the min dcf.
+    \item There is no improvements at all between raw features and
+    Standardized and Normalized features.
+    \item The best prior value is 0.5.
+  \end{itemize}
+  As result the best model so far is MVG, with prior 0.5 applied to the
+  gaussianized data.
+  
+
+  \begin{table*}[t]
+\caption{\label{tab:gaussian-comparison} Comparison of Min DCF between classifiers with different type of data }
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+\multicolumn{1}{l}{} & \textbf{$\tilde{\pi } = 0.1$} & \textbf{$\tilde{\pi } = 0.33$} & \textbf{$\tilde{\pi }= 0.5$} & \multicolumn{1}{l}{\textbf{$\tilde{\pi } = 0.9$}} \\ \hline
+\multicolumn{5}{c}{\textbf{Gaussianized Features}}                 \\ \hline
+\multicolumn{1}{c|}{MVG}           & 0.730 & 0.385 & 0.274 & 0.630 \\
+\multicolumn{1}{c|}{Naive}         & 0.773 & 0.542 & 0.422 & 0.806 \\
+\multicolumn{1}{c|}{Tied Gaussian} & 0.717 & 0.466 & 0.328 & 0.779 \\
+\multicolumn{1}{c|}{Tied Naive}    & 0.783 & 0.556 & 0.420 & 0.886 \\ \hline
+\multicolumn{5}{c}{\textbf{PCA (m= 9)}}                           \\ \hline
+\multicolumn{1}{c|}{MVG}           & 0.739 & 0.410 & 0.280 & 0.602 \\
+\multicolumn{1}{c|}{Naive}         & 0.771 & 0.516 & 0.363 & 0.685 \\
+\multicolumn{1}{c|}{Tied Gaussian} & 0.737 & 0.471 & 0.327 & 0.711 \\
+\multicolumn{1}{c|}{Tied Naive}    & 0.738 & 0.467 & 0.325 & 0.729 \\ \hline
+\multicolumn{5}{c}{\textbf{Standardized and Normalized Features}}  \\ \hline
+\multicolumn{1}{c|}{MVG}           & 0.708 & 0.410 & 0.283 & 0.716 \\
+\multicolumn{1}{c|}{Naive}         & 0.773 & 0.507 & 0.397 & 0.812 \\
+\multicolumn{1}{c|}{Tied Gaussian} & 0.745 & 0.447 & 0.307 & 0.684 \\
+\multicolumn{1}{c|}{Tied Naive}    & 0.779 & 0.511 & 0.380 & 0.888 \\ \hline
+\multicolumn{5}{c}{\textbf{Raw Features}}                          \\ \hline
+\multicolumn{1}{c|}{MVG}           & 0.708 & 0.410 & 0.283 & 0.716 \\
+\multicolumn{1}{c|}{Naive}         & 0.773 & 0.507 & 0.397 & 0.812 \\
+\multicolumn{1}{c|}{Tied Gaussian} & 0.745 & 0.447 & 0.307 & 0.684 \\
+\multicolumn{1}{c|}{Tied Naive}    & 0.779 & 0.511 & 0.380 & 0.888 \\ \hline
+
+\end{tabular}
+\end{center}
+\end{table*}
+
+  \subsection{DISCRIMINATIVE APPROACHES}
+  After learning that PCA does not help the results, and that standardizing and
+  normalizing has no impact it is decided to work with raw and gaussinazed features for the discriminative models.
+  
+  The first discriminative method to apply is Linear Regression where the
+  value of the hyperparameter $\lambda$ has to be tuned. In order to do this
+  hyperparameter tunning, a K-fold cross validation is applied with k=5.
+
+  The results can be found in figure \ref{fig:09LambdaMinDCF} (Gaussianized
+  features), and figure \ref{fig:10LambdaMinDCFRawValues} (Raw Features)
+  which shows that regularization has not benefit in raw features form, nor in
+  Gaussianized features form. Therefore the parameter $\lambda$ is set to 0 for the next
+  steps.
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=7cm]{09LambdaMinDCF}
+    \caption{Lambda tuning with minDCF (Gaussianized Features).}
+    \label{fig:09LambdaMinDCF}
+  \end{figure}
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=7cm]{10LambdaMinDCFRawValues}
+    \caption{Lambda tuning with minDCF (Raw Features).}
+    \label{fig:10LambdaMinDCFRawValues}
+  \end{figure}
+  
+  Because the classes are not balanced, the equation to minimize is: $$J(\mathbf{w},b)= \frac{\lambda}{2}\left \| \mathbf{w} \right \|^{2}+$$ 
+  $$\frac{\pi_T }{n_T}\sum_{i=1|c_i=1}^{n} log(1+e^{-z_i(\mathbf{w}^{T} \mathbf{x_i}+b)})+$$
+  $$\frac{1-\pi_T}{n_F} \sum_{i=1|c_i=1}^{n} log(1+e^{-z_i(\mathbf{w}^{T} \mathbf{x_i}+b)})$$
+   in order to re-balance the costs of such classes. 
+
+ Continuing with the process of searching the best model, logistic regression is applied to
+ both raw feature data and gaussianized feature data. The results of the logistic regression can be found in \ref{tab:logistic-regression}. The highlights of the results are:
+ \begin{itemize}
+     \item Both $\pi_T$ and the prior give their best results at 0.5.
+     \item There is not substantial difference between Gaussianized and Raw feature data.
+ \end{itemize}
+ 
+\begin{table}[H]
+\caption{\label{tab:logistic-regression} Logistic Regression with different priors and $\pi_T$}
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+\multicolumn{1}{l}{} & \textbf{$\tilde{\pi } = 0.1$} & \textbf{$\tilde{\pi } = 0.5$} & \multicolumn{1}{l}{\textbf{$\tilde{\pi}  = 0.9$}} \\ \hline
+\multicolumn{4}{c}{\textbf{Log Reg in Gaussianized Features}} \\ \hline
+\multicolumn{1}{c|}{ $\pi_T = 0.1$}     & 0.755     & 0.330     & 0.862    \\
+\multicolumn{1}{c|}{ $\pi_T = 0.5$}     & 0.817     & 0.350     & 0.711    \\
+\multicolumn{1}{c|}{ $\pi_T = 0.9$}     & 0.867     & 0.360     & 0.656    \\ \hline
+\multicolumn{4}{c}{\textbf{Log Reg in Raw Features}}          \\ \hline
+\multicolumn{1}{c|}{ $\pi_T = 0.1$}     & 0.798     & 0.330     & 0.650    \\
+\multicolumn{1}{c|}{ $\pi_T = 0.5$}     & 0.817     & 0.344     & 0.626    \\
+\multicolumn{1}{l|}{ $\pi_T = 0.9$}     & 0.845     & 0.351     & 0.604    \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+ In order to be able to compare with Gaussian models (which are quadratic), we apply a quadratic linear regression duplicating our features with its quadratic form. The results of the quadratic regression can be found in \ref{tab:quadratic-regression}. 
+\begin{table}[H]
+\caption{\label{tab:quadratic-regression} Quadratic Regression with different priors and $\pi_T$}
+
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+\multicolumn{1}{l}{} & \textbf{$\tilde{\pi } = 0.1$} & \textbf{$\tilde{\pi } = 0.5$} & \multicolumn{1}{l}{\textbf{$\tilde{\pi}  = 0.9$}} \\ \hline
+\multicolumn{4}{c}{\textbf{Quad Reg in Gaussianized Features}} \\ \hline
+\multicolumn{1}{c|}{$\pi_T = 0.1$}   & 0.732  & 0.328  & 0.623  \\
+\multicolumn{1}{c|}{$\pi_T = 0.5$}   & 0.763  & 0.305  & 0.560  \\
+\multicolumn{1}{c|}{$\pi_T = 0.9$}   & 0.780  & 0.300  & 0.538  \\ \hline
+\multicolumn{4}{c}{\textbf{Quad Regression in Raw Features}}          \\ \hline
+\multicolumn{1}{c|}{$\pi_T = 0.1$}   & 0.826  & 0.419  & 0.964  \\
+\multicolumn{1}{c|}{$\pi_T = 0.5$}   & 0.836  & 0.413  & 0.878  \\
+\multicolumn{1}{c|}{$\pi_T = 0.9$}   & 0.832  & 0.422  & 0.861  \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The results shows that:
+ \begin{itemize}
+     \item The parameters $\pi_T=0.5$ and $\tilde{\pi}=0.9$ give the best results overall
+     other methods with $\tilde{\pi}=0.5$ being very close 
+ \end{itemize}
+  
+Based on the results obtained in training, the best method is Logistic Regression in the Quadratic form.
+  
+\section{RESULTS--} 
+Now with the hyper parameters tuned and the parameters trained, the focus of the project
+is to apply these values over the Test data to see what would have happened running the models in a real case scenario.
+
+First, the results of the Gaussian methods applied on the Test Data are reported on \ref{tab:dcf-results}. This confirms that MVG method is the best Gaussian method when applied to a Gaussianized feature data with prior of 0.5.
+
+\begin{table}[H]
+\caption{\label{tab:dcf-results}Results of Min DCF over test data}
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+\multicolumn{1}{l}{} & \textbf{$\tilde{\pi } = 0.1$} & \textbf{$\tilde{\pi }= 0.5$} & \multicolumn{1}{l}{\textbf{$\tilde{\pi}  = 0.9$}} \\ \hline
+\multicolumn{4}{c}{Gaussianized Features}                  \\ \hline
+\multicolumn{1}{c|}{MVG}           & 0.670 & 0.341 & 0.803 \\
+\multicolumn{1}{c|}{Naive}         & 0.755 & 0.383 & 0.940 \\
+\multicolumn{1}{c|}{Tied Gaussian} & 0.702 & 0.325 & 0.793 \\
+\multicolumn{1}{c|}{Tied Naive}    & 0.823 & 0.383 & 0.932 \\ \hline
+\multicolumn{4}{c}{PCA (m= 9)}                             \\ \hline
+\multicolumn{1}{c|}{MVG}           & 0.998 & 0.566 & 0.940 \\
+\multicolumn{1}{c|}{Naive}         & 1     & 0.497 & 0.774 \\
+\multicolumn{1}{c|}{Tied Gaussian} & 0.993 & 0.551 & 0.836 \\
+\multicolumn{1}{c|}{Tied Naive}    & 0.993 & 0.542 & 0.850 \\ \hline
+\multicolumn{4}{c}{Raw Features}                           \\ \hline
+\multicolumn{1}{c|}{MVG}           & 0.655 & 0.337 & 0.700 \\
+\multicolumn{1}{c|}{Naive}         & 0.731 & 0.367 & 0.867 \\
+\multicolumn{1}{c|}{Tied Gaussian} & 0.681 & 0.315 & 0.705 \\
+\multicolumn{1}{c|}{Tied Naive}    & 0.738 & 0.369 & 0.930 \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Now with the simple Logistic Regression, whose results are reported on \ref{tab:lreg-results}, it is demostrated that the best hyperparameter are 
+the same ones as stated before. $\pi_T=0.5$ and prior of 0.5.
+
+
+\begin{table}[h]
+\caption{\label{tab:lreg-results}Results of DCF with Logistic Regression applied to test data}
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+\multicolumn{1}{l}{} & \textbf{$\tilde{\pi } = 0.1$} & \textbf{$\tilde{\pi } = 0.5$} & \multicolumn{1}{l}{\textbf{$\tilde{\pi}  = 0.9$}} \\ \hline
+\multicolumn{4}{c}{Logistic Regression in Gaussianized Features} \\ \hline
+\multicolumn{1}{c|}{$\pi_T = 0.1$}   & 0.691   & 0.313  & 0.835  \\
+\multicolumn{1}{c|}{$\pi_T = 0.5$}   & 0.699   & 0.341  & 0.697  \\
+\multicolumn{1}{c|}{$\pi_T = 0.9$}   & 0.812   & 0.366  & 0.676  \\ \hline
+\multicolumn{4}{c}{Log Regression in Raw Features}               \\ \hline
+\multicolumn{1}{c|}{$\pi_T = 0.1$}   & 0.727   & 0.330  & 0.663  \\
+\multicolumn{1}{c|}{$\pi_T = 0.5$}   & 0.720   & 0.342  & 0.628  \\
+\multicolumn{1}{l|}{$\pi_T = 0.9$}   & 0.705   & 0.351  & 0.610  \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Lastly, the results of the quadratic regression are reported on \ref{tab:quad-results}, showing still the best results for the hyper parameter $\pi_T=0.5$, but now the model
+performs better with a prior of 0.5; not so different than with a prior of 0.9.
+
+
+
+\begin{table}[h]
+\caption{\label{tab:quad-results}Results of DCF with Quadratic Regression applied to test data}
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+\multicolumn{1}{l}{} & \textbf{$\tilde{\pi } = 0.1$} & \textbf{$\tilde{\pi } = 0.5$} & \multicolumn{1}{l}{\textbf{$\tilde{\pi}  = 0.9$}} \\ \hline
+\multicolumn{4}{c}{Quadratic Regression in Gaussianized Features} \\ \hline
+\multicolumn{1}{c|}{$\pi_T = 0.1$}   & 0.650   & 0.313   & 0.662  \\
+\multicolumn{1}{c|}{$\pi_T = 0.5$}   & 0.687   & 0.299   & 0.648  \\
+\multicolumn{1}{c|}{$\pi_T = 0.9$}   & 0.762   & 0.303   & 0.623  \\ \hline
+\multicolumn{4}{c}{Quadratic Regression in Raw Features}          \\ \hline
+\multicolumn{1}{c|}{$\pi_T = 0.1$}   & 0.825   & 0.437   & 0.981  \\
+\multicolumn{1}{c|}{$\pi_T = 0.5$}   & 0.760   & 0.386   & 0.861  \\
+\multicolumn{1}{l|}{$\pi_T = 0.9$}   & 0.746   & 0.387   & 0.812  \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+  
+To analyze the behaviour of the prior, the figure \ref{13QuadraticTestResultCalibration}
+show that it does have a good calibration.
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=7cm]{images/13QuadraticTestResultCalibration.png}
+    \caption{Calibration of the prior 0.9.}
+    \label{fig:13QuadraticTestResultCalibration}
+  \end{figure}
+  
+  
+  \section{CONCLUSIONS--}
+  \begin{itemize}
+  \item The Gaussanization process was of great value here, because it allowed to include the so-called outliers, that were wines that ultimately were included in the analysis
+  \item The hyperparametrization is an important step, because in this case it showed that being $\lambda =0$, it was not necessary the regularization
+  \item 
+  \end{itemize}
+  
+  
+
+  \bibliographystyle{plain}
+  \bibliography{references}
+
+\end{document}
